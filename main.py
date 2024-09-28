@@ -43,29 +43,55 @@ schedule = [[] for _ in range(total_weeks)]
 
 # First, place all intra-division games
 for i in range(len(intra_division_games)):
-    week = i % total_weeks
-    schedule[week].append(intra_division_games[i])
+    for weekIndex in range(0,total_weeks):
+        schedule[weekIndex].append(intra_division_games[i])
+
+
 
 # Then, place inter-division games
 for i in range(len(inter_division_games)):
-    week = i % total_weeks
-    if len(schedule[week]) < games_per_week:
-        schedule[week].append(inter_division_games[i])
+    for weekIndex in range(0,total_weeks):
+        schedule[weekIndex].append(inter_division_games[i])
+
 
 # Ensure no team plays twice in one week
-def team_in_week(week_games, team):
-    return any(team in game for game in week_games)
+#def team_in_week(week_games, team):
+#    return any(team in game for game in week_games)
+
+schedule_nodup = [[] for _ in range(total_weeks)]
+
 
 # Adjust games to prevent the same team playing twice in the same week
+weekIndex = 0
 for week in schedule:
     week_teams = set()
     pdb.set_trace()
     for game in week:
         team1, team2 = game
-        if team1 in week_teams or team2 in week_teams:
-            print(f"Conflict: {team1} or {team2} already scheduled this week!")
-        week_teams.add(team1)
-        week_teams.add(team2)
+        hasConflict = False
+        if team1 in week_teams :
+            print(f"Conflict: {team1} already scheduled this week!")
+            hasConflict = True
+            # remove the game
+        else:
+            week_teams.add(team1)
+
+        if  team2 in week_teams:
+            print(f"Conflict:{team2} already scheduled this week!")
+            hasConflict = True
+            # remove the game
+        else:
+            week_teams.add(team2)
+
+        if (hasConflict == False):
+            schedule_nodup[weekIndex].append(game)
+
+
+    weekIndex = weekIndex +1
+
+
+pdb.set_trace()
+
 
 # Print the schedule
 for week_num, week in enumerate(schedule, start=1):
